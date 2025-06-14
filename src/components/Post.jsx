@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import HoverCardComponent from "./HoverCardComponent";
 import { handleBookmark } from "@/services/bookmark/handleBookmark";
+import { deleteBookmark } from "@/services/bookmark/deleteBookmark";
 import { getBookmarks } from "@/services/bookmark/getBookmarks";
 
 const Post = ({ info }) => {
@@ -38,8 +39,16 @@ const Post = ({ info }) => {
     queryKey: ["getBookmarks"],
     queryFn: () => getBookmarks(userId),
   });
-  const isBookmarked = data?.data?.some((bookmark) => bookmark.postId === info._id);
 
+  
+  const isBookmarked = data?.data?.some(
+    (bookmark) => bookmark.postId === info._id
+  );
+
+  // const { data } = useQuery({
+  //   queryKey:['removeBookmark'],
+  //   queryFn:()=>
+  // })
 
   return (
     <div
@@ -105,27 +114,35 @@ const Post = ({ info }) => {
             "bg-black hover:text-red-500 hover:bg-red-900/30 text-muted-foreground"
           }
         >
-          <Heart className='w-4 h-auto' />  
+          <Heart className='w-4 h-auto' />
           {/* <Heart className='w-4 h-auto text-red-500' /> */}
           <p>123</p>
         </Button>
 
-        <Button
+        {isBookmarked ? (
+          <Button
+            onClick={async (e) => {
+              e.stopPropagation();
+              await deleteBookmark(userId, info._id);
+              queryClient.invalidateQueries(["getBookmarks"]);
+            }}
+            className={
+              "bg-black hover:text-yellow-500 hover:bg-yellow-900/30 text-muted-foreground"
+            }
+            >
+            <BookmarkCheck className='w-4 h-auto text-yellow-500' />
+          </Button>
+        ) : (
+          <Button
           onClick={async (e) => {
             e.stopPropagation();
             await handleBookmark(userId, info._id);
             queryClient.invalidateQueries(["getBookmarks"]);
-          }}
-          className={
-            "bg-black hover:text-yellow-500 hover:bg-yellow-900/30 text-muted-foreground"
-          }
-        >
-          {isBookmarked ? (
-            <BookmarkCheck className='w-4 h-auto text-yellow-500' />
-          ) : (
+            }}
+          >
             <Bookmark className='w-4 h-auto' />
-          )}
-        </Button>
+          </Button>
+        )}
       </div>
     </div>
   );
