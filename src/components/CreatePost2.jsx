@@ -40,7 +40,7 @@ const CreatePost2 = () => {
       <div className='flex justify-between items-center mt-4'>
         <div>
           <button className='cursor-pointer ml-12 text-muted-foreground'>
-            <Image className='size-4' />
+            <Image className='size-4' alt='hello' />
           </button>
         </div>
         <Button

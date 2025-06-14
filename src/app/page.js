@@ -45,7 +45,7 @@ export default function Home() {
         {/* <Button onClick={handleGoogleLogin} variant={'secondary'} className={'rounded-full w-full mb-5'}>Google</Button>
         <Button variant={'secondary'} className={'rounded-full w-full mb-5'}>Github</Button>
          */}
-        <p className='text-center font-semibold mt-20 mb-5'>Don't have an account</p>
+        <p className='text-center font-semibold mt-20 mb-5'>Don&apost have an account</p>
         <Button onClick={() => router.push('/signup')} variant={'secondary'} className={'rounded-full w-full'}>Sign up</Button>
       </div>
     </div>
