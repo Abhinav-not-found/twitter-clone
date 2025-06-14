@@ -8,7 +8,7 @@ await connect()
 
 export async function GET() {
   try {
-    const allPosts = await Post.find()
+    const allPosts = await Post.find().sort({createdAt:-1})
     return NextResponse.json({ data: allPosts, message: 'Successful' })
 
   } catch (error) {
