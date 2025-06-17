@@ -40,7 +40,6 @@ const Post = ({ info }) => {
     queryFn: () => getBookmarks(userId),
   });
 
-  
   const isBookmarked = data?.data?.some(
     (bookmark) => bookmark.postId === info._id
   );
@@ -129,16 +128,17 @@ const Post = ({ info }) => {
             className={
               "bg-black hover:text-yellow-500 hover:bg-yellow-900/30 text-muted-foreground"
             }
-            >
+          >
             <BookmarkCheck className='w-4 h-auto text-yellow-500' />
           </Button>
         ) : (
           <Button
-          onClick={async (e) => {
-            e.stopPropagation();
-            await handleBookmark(userId, info._id);
-            queryClient.invalidateQueries(["getBookmarks"]);
+            onClick={async (e) => {
+              e.stopPropagation();
+              await handleBookmark(userId, info._id);
+              queryClient.invalidateQueries(["getBookmarks"]);
             }}
+            className={'text-muted-foreground hover:bg-yellow-900/30 hover:text-yellow-500'}
           >
             <Bookmark className='w-4 h-auto' />
           </Button>
