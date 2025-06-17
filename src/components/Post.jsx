@@ -8,11 +8,7 @@ import {
   Trash,
 } from "lucide-react";
 import { Button } from "./ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+import { DropdownMenu,  DropdownMenuContent,  DropdownMenuTrigger,} from "./ui/dropdown-menu";
 import { handleDeletePost } from "@/services/post/deletePost.service";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -21,9 +17,9 @@ import HoverCardComponent from "./HoverCardComponent";
 import { handleBookmark } from "@/services/bookmark/handleBookmark";
 import { deleteBookmark } from "@/services/bookmark/deleteBookmark";
 import { getBookmarks } from "@/services/bookmark/getBookmarks";
+import { useLikeMutations } from "@/services/post/useLikeMutation";
 
 const Post = ({ info }) => {
-  const currentUser = localStorage.getItem("userId");
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -44,10 +40,11 @@ const Post = ({ info }) => {
     (bookmark) => bookmark.postId === info._id
   );
 
-  // const { data } = useQuery({
-  //   queryKey:['removeBookmark'],
-  //   queryFn:()=>
-  // })
+  const likesIncluded = info.likes.includes(userId);
+
+ const { likeMutation, likeDecreaseMutation } = useLikeMutations(info._id, userId);
+
+
 
   return (
     <div
@@ -79,7 +76,7 @@ const Post = ({ info }) => {
           </DropdownMenuTrigger>
           <DropdownMenuContent className={"bg-black text-white"}>
             <div>
-              {info.userId === currentUser && (
+              {info.userId === userId && (
                 <Button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -107,16 +104,35 @@ const Post = ({ info }) => {
           <p>123</p>
         </Button>
 
-        <Button
-          onClick={(e) => e.stopPropagation()}
-          className={
-            "bg-black hover:text-red-500 hover:bg-red-900/30 text-muted-foreground"
-          }
-        >
-          <Heart className='w-4 h-auto' />
-          {/* <Heart className='w-4 h-auto text-red-500' /> */}
-          <p>123</p>
-        </Button>
+        {likesIncluded ? (
+          //unlike
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              likeDecreaseMutation.mutate();
+            }}
+            className={
+              "bg-black hover:text-red-500 hover:bg-red-900/30 text-muted-foreground"
+            }
+          >
+            <Heart className='w-4 h-auto text-red-500' />
+            <p>{info.likes.length}</p>
+          </Button>
+        ) : (
+          //like
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              likeMutation.mutate();
+            }}
+            className={
+              "bg-black hover:text-red-500 hover:bg-red-900/30 text-muted-foreground"
+            }
+          >
+            <Heart className='w-4 h-auto' />
+            <p>{info?.likes.length}</p>
+          </Button>
+        )}
 
         {isBookmarked ? (
           <Button
@@ -138,7 +154,9 @@ const Post = ({ info }) => {
               await handleBookmark(userId, info._id);
               queryClient.invalidateQueries(["getBookmarks"]);
             }}
-            className={'text-muted-foreground hover:bg-yellow-900/30 hover:text-yellow-500'}
+            className={
+              "text-muted-foreground hover:bg-yellow-900/30 hover:text-yellow-500"
+            }
           >
             <Bookmark className='w-4 h-auto' />
           </Button>

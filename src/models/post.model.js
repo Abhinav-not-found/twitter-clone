@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 const postSchema = new mongoose.Schema({
   content: {
@@ -20,10 +20,10 @@ const postSchema = new mongoose.Schema({
     required: [true, 'userId is required'],
     ref: 'User'
   },
-  likes:{
-    type: Number,
-    default:0
-  }
+  likes:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'User',
+  }]
 }, { timestamps: true })
 
 const Post = mongoose.models.post || mongoose.model('post', postSchema)
